@@ -1,6 +1,47 @@
 # Observing Spring AI Applications with OpenTelemetry
 
+## Insights about Gen.ai from Agent0
 
+Enhanced Analysis with Gen.AI Properties
+Generative AI Telemetry
+All three traces contain consistent gen.ai semantic convention attributes in their spring_ai chat_client child spans:
+
+Gen.AI System Information:
+
+gen_ai.operation.name: framework - indicates framework-level AI operation
+gen_ai.system: spring_ai - identifies Spring AI as the generative AI framework
+Spring AI Configuration:
+
+spring.ai.kind: chat_client - chat client operation type
+spring.ai.chat.client.stream: true - all requests use streaming responses
+spring.ai.chat.client.advisors: ["MessageChatMemoryAdvisor", "stream"]
+MessageChatMemoryAdvisor: provides conversation history/context retention
+stream: enables incremental response streaming
+Tool/Function Calling:
+
+spring.ai.chat.client.tool.names: ["displayMerchImages", "getItemStock", "listAllItems", "placeOrder"]
+The AI model has access to 4 e-commerce tools for:
+displayMerchImages: Show product images
+getItemStock: Check inventory levels
+listAllItems: Browse catalog
+placeOrder: Complete purchases
+Architecture Insights
+Span Hierarchy:
+
+Root: POST /api/chat/stream (CLIENT) - HTTP endpoint
+Child: spring_ai chat_client (SERVER) - AI framework orchestration
+Grandchild: message_chat_memory (SERVER) - Memory advisor processing
+Additional descendants (not shown) likely include actual LLM API calls and tool executions
+Memory & Context: The MessageChatMemoryAdvisor in all traces indicates this is a stateful conversational AI with chat history, explaining potential duration variations based on conversation context length and complexity.
+
+Performance Correlation:
+
+19dc768043f9cbe4
+: 4.198s - May involve multiple tool calls or longer context
+9b83f2e971bbceb6
+: 2.752s - Moderate complexity
+7816e46aa6236360
+: 1.060s - Fastest, possibly simpler query with no tool usage
 
 ## Insights from Agent0
 
