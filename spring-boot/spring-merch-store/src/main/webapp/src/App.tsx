@@ -401,13 +401,6 @@ export default function App() {
   const [tick, setTick] = useState(true)
 
   useEffect(() => {
-    fetch('/api/config')
-      .then(res => res.json())
-      .then(_data => {})
-      .catch(() => {})
-  }, [])
-
-  useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 

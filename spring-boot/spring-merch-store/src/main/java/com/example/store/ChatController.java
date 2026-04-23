@@ -3,6 +3,8 @@ package com.example.store;
 import com.example.store.model.MerchItem;
 import com.example.store.model.Order;
 import com.example.store.model.OrderLine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class ChatController {
+    private Logger logger = LoggerFactory.getLogger(ChatController.class);
 
     static final List<MerchItem> INVENTORY = List.of(
             new MerchItem("Spring Boot",       "T-Shirt", 50,  29.99, "https://spring.io/img/projects/spring-boot.svg"),
@@ -46,6 +49,8 @@ public class ChatController {
             new MerchItem("Spring Statemachine","T-Shirt",  8, 29.99, "https://spring.io/img/projects/spring-statemachine.svg"),
             new MerchItem("Spring Statemachine","Sticker",  60,  4.99, "https://spring.io/img/projects/spring-statemachine.svg")
     );
+
+
 
     @Tool(description = "Get the stock quantity and price of a Spring merch item by project name and/or type (T-Shirt, Socks, Sticker)")
     public String getItemStock(String itemName) {
@@ -121,7 +126,7 @@ public class ChatController {
 
         String orderId = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         Order order = new Order(orderId, orderedItems, total);
-        System.out.println("Print Order: " + order);
+        logger.info("Placed order #{} for {}", orderId, order.items());
         return String.format(
                 "Your order #%s has been placed successfully! 🎉%n" +
                         "Items: %s%n" +
