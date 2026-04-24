@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.observation.OpenTelemetryServerRequestObservationConvention;
 
 import java.util.List;
-
+//@TODO: delete when new arconia release is out
 @Configuration(proxyBeanMethods = false)
 public class OpenTelemetryConfiguration {
 

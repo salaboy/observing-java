@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
  *
  *   Check very useful article: https://jettro.dev/reliable-ai-with-spring-ai-guardrails-observability-and-evaluations-f1fa08e67a4b
  */
+
+//@TODO: delete with arconia and enable property
 @Configuration
 public class ChatObservationConventionConfig {
 
