@@ -1,8 +1,12 @@
-# Python Merch Store
+# Python Merch Store (Otel Langchain Instrumented)
+
+**Note:** This version of the application is using the [Langchain Otel Instrumentation](https://pypi.org/project/opentelemetry-instrumentation-langchain/)
 
 An AI-powered merch store chatbot for Python community projects. Chat with the store assistant to browse T-Shirts, Socks, and Stickers from projects like NumPy, Pandas, PyTorch, TensorFlow, LangChain, and more. The assistant can look up inventory, show product cards, and place orders on your behalf.
 
 Built with [LangChain](https://docs.langchain.com) + [LangGraph](https://langchain-ai.github.io/langgraph/) for the AI agent, [Claude](https://docs.anthropic.com) as the LLM, [FastAPI](https://fastapi.tiangolo.com) for the backend, and a React/TypeScript frontend with a retro Windows 95 theme toggle.
+
+
 
 ## Architecture
 
@@ -90,6 +94,57 @@ python -m app.main
 ```
 
 The server starts on **http://localhost:8080**. Open it in your browser to use the chat UI.
+
+## Docker
+
+The multi-stage Dockerfile builds the React frontend and installs Python dependencies in a single image — no local Python or Node.js required.
+
+### Build the image
+
+```bash
+docker build -t python-merch-store .
+```
+
+### Push to a container registry
+
+Tag the image for your registry and push it. Replace `your-registry.com/your-org` with your actual registry URL (e.g. Docker Hub, GitHub Container Registry, AWS ECR, Google Artifact Registry):
+
+```bash
+# Docker Hub
+docker tag python-merch-store your-dockerhub-user/python-merch-store:latest
+docker push your-dockerhub-user/python-merch-store:latest
+
+# GitHub Container Registry
+docker tag python-merch-store ghcr.io/your-org/python-merch-store:latest
+docker push ghcr.io/your-org/python-merch-store:latest
+```
+
+You may need to authenticate first with `docker login` (Docker Hub) or `echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin` (GHCR).
+
+### Run the container
+
+Minimal run (no observability):
+
+```bash
+docker run -p 8080:8080 \
+  -e ANTHROPIC_API_KEY=your-key-here \
+  python-merch-store
+```
+
+With Dash0 observability:
+
+```bash
+docker run -p 8080:8080 \
+  -e ANTHROPIC_API_KEY=your-key-here \
+  -e OTEL_SERVICE_NAME=python-merch-store \
+  -e OTEL_EXPORTER_OTLP_ENDPOINT=<your-dash0-endpoint> \
+  -e OTEL_EXPORTER_OTLP_HEADERS_AUTHORIZATION=<your-dash0-auth-token> \
+  -e DASH0_DATASET=<your-dash0-dataset> \
+  -e 'OTEL_EXPORTER_OTLP_HEADERS=Authorization=Bearer <your-dash0-auth-token>,Dash0-Dataset=<your-dash0-dataset>' \
+  python-merch-store
+```
+
+The server starts on **http://localhost:8080**.
 
 ## Development
 
