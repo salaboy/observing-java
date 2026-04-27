@@ -57,7 +57,10 @@
             <groupId>io.arconia</groupId>
             <artifactId>arconia-opentelemetry-spring-boot-starter</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>io.arconia</groupId>
+            <artifactId>arconia-opentelemetry-semantic-conventions</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
