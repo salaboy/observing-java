@@ -1,7 +1,6 @@
 package com.example.store;
 
 
-import org.springframework.boot.micrometer.tracing.opentelemetry.autoconfigure.otlp.OtlpTracingConnectionDetails;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.testcontainers.containers.GenericContainer;
@@ -24,10 +23,6 @@ public class ContainersConfig {
                 .withNetworkAliases("jaeger");
     }
 
-    @Bean
-    OtlpTracingConnectionDetails otlpTracingConnectionDetails(GenericContainer<?> jaegerContainer) {
-        return transport -> "http://" + jaegerContainer.getHost() + ":"
-                + jaegerContainer.getMappedPort(4318) + "/v1/traces";
-    }
+
 
 }

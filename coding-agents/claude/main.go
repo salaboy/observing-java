@@ -299,18 +299,21 @@ func handleChatStream(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// For new sessions, wait for the init event before sending the first message.
+	// Send the user message to Claude's stdin.
+	// NOTE: with --input-format stream-json the CLI will not emit the
+	// system/init event until it receives the first message, so we must
+	// write to stdin *before* waiting for init.
+	if err := s.SendMessage(req.Prompt); err != nil {
+		writeSSEError(w, flusher, fmt.Sprintf("failed to send message: %v", err))
+		return
+	}
+
+	// For new sessions, wait for the init event before streaming the response.
 	if isNew {
 		if err := waitForInit(s, w, flusher); err != nil {
 			writeSSEError(w, flusher, err.Error())
 			return
 		}
-	}
-
-	// Send the user message to Claude's stdin.
-	if err := s.SendMessage(req.Prompt); err != nil {
-		writeSSEError(w, flusher, fmt.Sprintf("failed to send message: %v", err))
-		return
 	}
 
 	// Stream events until the turn completes (result message).
