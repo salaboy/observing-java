@@ -1,0 +1,26 @@
+[project]
+name = "python-merch-store"
+version = "0.1.0"
+description = "Python Merch Store chatbot powered by LangChain and OpenAI"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.34",
+    "langchain>=0.3",
+    "langchain-openai>=0.3",
+    "langgraph>=0.3",
+    "pydantic>=2.0",
+    "sse-starlette>=2.0",
+    "opentelemetry-instrumentation-fastapi>=0.40",
+    "opentelemetry-instrumentation-langchain @ git+https://github.com/open-telemetry/opentelemetry-python-contrib.git@main#subdirectory=instrumentation-genai/opentelemetry-instrumentation-langchain",
+    "opentelemetry-instrumentation-openai @ git+https://github.com/open-telemetry/opentelemetry-python-contrib.git@main#subdirectory=instrumentation-genai/opentelemetry-instrumentation-openai",
+    "opentelemetry-util-genai @ git+https://github.com/open-telemetry/opentelemetry-python-contrib.git@main#subdirectory=util/opentelemetry-util-genai",
+    "opentelemetry-sdk>=1.20",
+    "opentelemetry-exporter-otlp>=1.20",
+]
+
+[project.optional-dependencies]
+dev = ["python-dotenv>=1.0"]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
