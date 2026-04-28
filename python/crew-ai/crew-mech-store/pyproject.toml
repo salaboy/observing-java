@@ -1,0 +1,22 @@
+[project]
+name = "crew-merch-store"
+version = "0.1.0"
+description = "Python Merch Store chatbot powered by CrewAI and Anthropic Claude"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.34",
+    "crewai[anthropic]>=1.14",
+    "pydantic>=2.0",
+    "sse-starlette>=2.0",
+    "opentelemetry-instrumentation-fastapi>=0.40",
+    "opentelemetry-instrumentation-anthropic>=0.48,<0.55",
+    "opentelemetry-sdk>=1.34,<1.35",
+    "opentelemetry-exporter-otlp>=1.34,<1.35",
+]
+
+[project.optional-dependencies]
+dev = ["python-dotenv>=1.0"]
+
+[tool.setuptools.packages.find]
+include = ["*.py"]

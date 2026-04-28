@@ -1,0 +1,6 @@
+pyproject.toml
+crew_merch_store.egg-info/PKG-INFO
+crew_merch_store.egg-info/SOURCES.txt
+crew_merch_store.egg-info/dependency_links.txt
+crew_merch_store.egg-info/requires.txt
+crew_merch_store.egg-info/top_level.txt

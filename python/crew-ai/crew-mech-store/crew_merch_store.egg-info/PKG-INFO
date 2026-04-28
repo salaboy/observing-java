@@ -1,0 +1,16 @@
+Metadata-Version: 2.4
+Name: crew-merch-store
+Version: 0.1.0
+Summary: Python Merch Store chatbot powered by CrewAI and Anthropic Claude
+Requires-Python: <3.14,>=3.11
+Requires-Dist: fastapi>=0.115
+Requires-Dist: uvicorn[standard]>=0.34
+Requires-Dist: crewai[anthropic]>=1.14
+Requires-Dist: pydantic>=2.0
+Requires-Dist: sse-starlette>=2.0
+Requires-Dist: opentelemetry-instrumentation-fastapi>=0.40
+Requires-Dist: opentelemetry-instrumentation-anthropic<0.55,>=0.48
+Requires-Dist: opentelemetry-sdk<1.35,>=1.34
+Requires-Dist: opentelemetry-exporter-otlp<1.35,>=1.34
+Provides-Extra: dev
+Requires-Dist: python-dotenv>=1.0; extra == "dev"
