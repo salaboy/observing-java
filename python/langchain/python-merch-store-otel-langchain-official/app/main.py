@@ -7,6 +7,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.instrumentation.anthropic import AnthropicInstrumentor
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.langchain import LangChainInstrumentor
 from opentelemetry.sdk.resources import Resource
@@ -22,6 +23,7 @@ provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
 trace.set_tracer_provider(provider)
 
 LangChainInstrumentor().instrument()
+AnthropicInstrumentor().instrument()
 
 from app.agent import agent  # noqa: E402 — must import after instrumentation
 from app.models import ChatRequest, ChatResponse
