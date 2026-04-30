@@ -1,15 +1,15 @@
-name: Build crew-merch-store
+name: Build crew-ai-merch-store
 
 on:
   push:
     branches: [main]
     paths:
-      - "python/crew-ai/crew-mech-store/**"
+      - "python/crew-ai/crew-ai-mech-store/**"
   workflow_dispatch:
 
 env:
-  IMAGE: salaboy/crew-merch-store
-  CONTEXT_DIR: python/crew-ai/crew-mech-store
+  IMAGE: salaboy/crew-ai-merch-store
+  CONTEXT_DIR: python/crew-ai/crew-ai-mech-store
 
 jobs:
   build-and-push:
@@ -60,5 +60,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add "${{ env.CONTEXT_DIR }}/VERSION"
-          git commit -m "release crew-merch-store v${{ steps.version.outputs.new }}"
+          git commit -m "release crew-ai-merch-store v${{ steps.version.outputs.new }}"
           git push
