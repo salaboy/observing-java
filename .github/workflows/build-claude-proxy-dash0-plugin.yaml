@@ -1,15 +1,15 @@
-name: Build python-merch-store-otel-langchain-official
+name: Build claude-proxy-dash0-plugin
 
 on:
   push:
     branches: [main]
     paths:
-      - "python/langchain/python-merch-store-otel-langchain-official/**"
+      - "coding-agents/dash0-agent-plugin/**"
   workflow_dispatch:
 
 env:
-  IMAGE: salaboy/python-merch-store-otel-langchain-official
-  CONTEXT_DIR: python/langchain/python-merch-store-otel-langchain-official
+  IMAGE: salaboy/claude-proxy-dash0-plugin
+  CONTEXT_DIR: coding-agents/dash0-agent-plugin
 
 jobs:
   build:
@@ -113,5 +113,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add "${{ env.CONTEXT_DIR }}/VERSION"
-          git commit -m "release python-merch-store-otel-langchain-official v${{ steps.version.outputs.new }}"
+          git commit -m "release claude-proxy-dash0-plugin v${{ steps.version.outputs.new }}"
           git push
