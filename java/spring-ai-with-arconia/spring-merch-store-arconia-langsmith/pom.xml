@@ -59,7 +59,7 @@
         </dependency>
         <dependency>
             <groupId>io.arconia</groupId>
-            <artifactId>arconia-langsmith-ai-semantic-conventions</artifactId>
+            <artifactId>arconia-opentelemetry-ai-semantic-conventions</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
