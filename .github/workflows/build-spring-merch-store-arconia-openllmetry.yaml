@@ -45,6 +45,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ${{ env.CONTEXT_DIR }}
+          file: ${{ env.CONTEXT_DIR }}/src/main/docker/Dockerfile
           platforms: ${{ matrix.platform }}
           outputs: type=image,name=${{ env.IMAGE }},push-by-digest=true,name-canonical=true,push=true
 
