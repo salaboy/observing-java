@@ -17,7 +17,7 @@
     <properties>
         <java.version>21</java.version>
         <spring-ai.version>2.0.0-M5</spring-ai.version>
-        <arconia.version>0.26.0</arconia.version>
+        <arconia.version>0.27.1</arconia.version>
         <skip.frontend.build>false</skip.frontend.build>
     </properties>
 
@@ -59,7 +59,7 @@
         </dependency>
         <dependency>
             <groupId>io.arconia</groupId>
-            <artifactId>arconia-openinference-semantic-conventions</artifactId>
+            <artifactId>arconia-openinference-ai-semantic-conventions</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -123,7 +123,7 @@
             </plugin>
         </plugins>
     </build>
-    <repositories>
+    <!-- <repositories>
         <repository>
             <id>snapshots</id>
             <url>https://central.sonatype.com/repository/maven-snapshots</url>
@@ -131,5 +131,5 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-    </repositories>
+    </repositories> -->
 </project>
