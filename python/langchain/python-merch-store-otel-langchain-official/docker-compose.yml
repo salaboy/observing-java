@@ -1,0 +1,32 @@
+# Memory backend for the demo: Redis + the Redis Agent Memory Server (AMS).
+# Start it with:  docker compose up
+# The merch-store app itself runs separately (python -m app.main) and talks to
+# AMS at http://localhost:8000.
+
+services:
+  redis:
+    image: redis/redis-stack:latest # Redis with JSON + Search + Vector
+    ports:
+      - "6379:6379"
+      - "8001:8001" # RedisInsight UI (handy for showing memories live in a talk)
+    volumes:
+      - redis_data:/data
+
+  agent-memory-server:
+    image: redislabs/agent-memory-server:latest
+    depends_on:
+      - redis
+    ports:
+      - "8000:8000"
+    environment:
+      REDIS_URL: redis://redis:6379
+      # AMS uses OpenAI for embeddings + background fact extraction.
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      # Single-process dev setup: run background tasks inline, no separate worker.
+      DISABLE_AUTH: "true"
+      LONG_TERM_MEMORY: "true"
+    command: >
+      agent-memory api --host 0.0.0.0 --port 8000 --task-backend=asyncio
+
+volumes:
+  redis_data:

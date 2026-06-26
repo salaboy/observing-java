@@ -1,4 +1,13 @@
+import os
 from pathlib import Path
+
+# Load .env (if present) before anything reads env vars — API keys and OTEL_* settings.
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    pass
 
 import uvicorn
 from fastapi import FastAPI
@@ -19,13 +28,22 @@ from sse_starlette.sse import EventSourceResponse
 # OTEL_EXPORTER_OTLP_ENDPOINT, and OTEL_EXPORTER_OTLP_HEADERS from env.
 resource = Resource.create()
 provider = TracerProvider(resource=resource)
-provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
+# Only export spans when an OTLP endpoint is configured. Without this guard the
+# exporter defaults to localhost:4318 and floods the log with connection-refused
+# retries whenever no collector is running.
+if os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT"):
+    provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
 trace.set_tracer_provider(provider)
 
 LangChainInstrumentor().instrument()
 AnthropicInstrumentor().instrument()
 
-from app.agent import agent  # noqa: E402 — must import after instrumentation
+from app.agent import build_agent  # noqa: E402 — must import after instrumentation
+from app.memory import (  # noqa: E402
+    DEFAULT_USER_ID,
+    hydrate_messages,
+    persist_turn,
+)
 from app.models import ChatRequest, ChatResponse
 
 app = FastAPI(title="Python Merch Store - LangChain")
@@ -54,23 +72,30 @@ def _extract_text(content: str | list) -> str:
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest) -> ChatResponse:
-    config = {"configurable": {"thread_id": request.conversation_id}}
-    result = await agent.ainvoke(
-        {"messages": [("user", request.message)]},
-        config=config,
-    )
-    ai_message = result["messages"][-1]
-    return ChatResponse(response=_extract_text(ai_message.content))
+    user_id = request.user_id or DEFAULT_USER_ID
+
+    # Load conversation history + relevant long-term memories from Redis (AMS).
+    messages = await hydrate_messages(request.conversation_id, user_id, request.message)
+    agent = build_agent(request.conversation_id, user_id)
+
+    result = await agent.ainvoke({"messages": messages})
+    reply = _extract_text(result["messages"][-1].content)
+
+    # Persist the turn; the server promotes durable facts to long-term in the background.
+    await persist_turn(request.conversation_id, user_id, request.message, reply)
+    return ChatResponse(response=reply)
 
 
 @app.post("/api/chat/stream")
 async def chat_stream(request: ChatRequest) -> EventSourceResponse:
-    config = {"configurable": {"thread_id": request.conversation_id}}
+    user_id = request.user_id or DEFAULT_USER_ID
+    messages = await hydrate_messages(request.conversation_id, user_id, request.message)
+    agent = build_agent(request.conversation_id, user_id)
 
     async def event_generator():
+        parts: list[str] = []
         async for event in agent.astream_events(
-            {"messages": [("user", request.message)]},
-            config=config,
+            {"messages": messages},
             version="v2",
         ):
             if event["event"] == "on_chat_model_stream":
@@ -78,7 +103,13 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
                 if chunk.content:
                     text = _extract_text(chunk.content)
                     if text:
+                        parts.append(text)
                         yield {"data": text}
+
+        # Persist the full turn once streaming completes.
+        await persist_turn(
+            request.conversation_id, user_id, request.message, "".join(parts)
+        )
 
     return EventSourceResponse(event_generator())
 
