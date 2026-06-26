@@ -22,6 +22,9 @@ class OrderLine(BaseModel):
 class ChatRequest(BaseModel):
     conversation_id: str
     message: str
+    # Stable across chats; the cross-session key for long-term memory.
+    # Defaults server-side to DEFAULT_USER_ID when the frontend doesn't send one.
+    user_id: str | None = None
 
 
 class ChatResponse(BaseModel):

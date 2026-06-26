@@ -11,6 +11,8 @@ dependencies = [
     "langgraph>=0.3",
     "pydantic>=2.0",
     "sse-starlette>=2.0",
+    "agent-memory-client>=0.14",
+    "python-dotenv>=1.0",
     "opentelemetry-instrumentation-fastapi>=0.40",
     "opentelemetry-instrumentation-langchain @ git+https://github.com/open-telemetry/opentelemetry-python-contrib.git@main#subdirectory=instrumentation-genai/opentelemetry-instrumentation-langchain",
     "opentelemetry-instrumentation-anthropic @ git+https://github.com/open-telemetry/opentelemetry-python-contrib.git@main#subdirectory=instrumentation-genai/opentelemetry-instrumentation-anthropic",
@@ -18,9 +20,6 @@ dependencies = [
     "opentelemetry-sdk>=1.20",
     "opentelemetry-exporter-otlp>=1.20",
 ]
-
-[project.optional-dependencies]
-dev = ["python-dotenv>=1.0"]
 
 [tool.setuptools.packages.find]
 include = ["app*"]

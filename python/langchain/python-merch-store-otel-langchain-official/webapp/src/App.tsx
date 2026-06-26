@@ -397,6 +397,11 @@ export default function App() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [conversation_id] = useState(() => crypto.randomUUID())
+  // Optional ?user_id=... in the page URL picks the shopper (cross-session memory key).
+  // e.g. http://localhost:8080/?user_id=elena — falls back to the server default if absent.
+  const [user_id] = useState(
+    () => new URLSearchParams(window.location.search).get('user_id') || undefined,
+  )
   const bottomRef = useRef<HTMLDivElement>(null)
   const [tick, setTick] = useState(true)
 
@@ -427,7 +432,7 @@ export default function App() {
       const res = await fetch('/api/chat/stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ conversation_id, message: text }),
+        body: JSON.stringify({ conversation_id, message: text, user_id }),
       })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
 
@@ -444,7 +449,9 @@ export default function App() {
         for (const raw of lines) {
           const line = raw.replace(/\r$/, '')
           if (line.startsWith('data:')) {
-            const token = line.replace(/^data:\s*/, '')
+            // Strip only the single SSE padding space after "data:", NOT the
+            // token's own leading whitespace (otherwise "we" + " have" -> "wehave").
+            const token = line.replace(/^data: ?/, '')
             setMessages(prev => {
               const updated = [...prev]
               updated[updated.length - 1] = {
